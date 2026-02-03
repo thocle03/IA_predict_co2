@@ -1,0 +1,38 @@
+Dans le cadre de mes stages et doctorat je veux donc faire une IA qui predit la pollution d'une ville en fonction de plusieurs parametres 
+voici l'obectif finale de mon IA 
+
+donc avoir une interface pour pouvoir donc demander la pollution d'une ville donc ensuite je dois pouvoir telecharger la carte demandée rapidement et envoyer toutes les informations necessaires a mon IA 
+qui doit etre capable donc de me predire la pollution pour n'importe quelle ville du monde a une heure precise.
+
+Pour entrainer mon modele je vais donc me servir de fichier csv issus de simulations sumo avec donc plusieurs grosses villes avec donc des configurations geographique differentes et des repartitions aussi par types de vehicules differentes en fonction de la zone geographique
+
+Mon IA doit donc integrer enormement de parametres pour l'entrainer au mieux 
+
+voici les notes prises donc pendant ma discussion avec mes maitres de stages et docteurs 
+modelisation geometrie de ville 	
+une sorte de description de la villes avec des parametres 
+comparer la ville voulu avec les cartes qu'on a déjà 
+bien voir avec geometrie 
+gros travail de typographie de ville suivre une arboraissance
+voir comment l'ia apprend ta map en fonction des graphes etc
+proba de ressemblance des villes choisie
+
+voir parametres pertinents lors de la recuperation d'une map d'une ville
+longueurs de rues moyennes nombre d'intersection etc etc
+voir parametres qui influent sur la pollution
+
+restituer le nombre de pollution que j'ai grace a mon IA a l'aide de tous les parametres dites
+pollution, geometrie repartition etc comme parametres
+par exemple repartition asie, geometrie los angeles, population, configuration de flux de voiture
+
+a termes je veux faire une publication scientiofique
+je veux faire une vrai IA complexe et poussée au plus loin de ce qu'est possible et faire de multiples tests pour voir les meilleurs parametres a concerver
+
+Bien faire le détail de chaque étape, voir ce qu'on utilise comme modele etc, identifier les parametres important,
+
+Mes maitres de stages et docteurs me donner ue feuille d'instructions dans ce dossier
+
+a laquelle je peut je pense rajouter ces outils qui peuvent bien m'aider pour la partie graphe des cartes recuperer
+L'Analyse Spectrale (Valeurs Propres)
+La Constante de Kreiss -> "Le Détecteur de Nervosité"
+Le Contrôle MPC (Model Predictive Control) 

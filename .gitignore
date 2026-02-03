@@ -1,0 +1,6 @@
+/data
+/data/
+*.log
+*.err
+*.out
+*.csv

@@ -1,0 +1,52 @@
+Stage Thomas suite - Partie IA
+
+But.
+L’objectif est de prédire, par un modèle IA, la pollution d’un réseau routier en fonction de paramètres
+caractéristiques du réseau et du trafic.
+
+Variables explicatives
+Dans un premier temps, on pourrait fixer le profil du trafic pour se concentrer sur le réseau routier et
+chercher les paramètres pertinents.
+Le réseau routier est modélisé par un graphe planaire (ou quasiment planaire) pondéré. Une arête du
+graphe modélise une rue ou une route. Les poids sur les arêtes modélisent la longueur des arêtes. La
+pondération doit donc vérifier l’inégalité triangulaire.
+D’autres paramètres pour une arête à considérer :
+- la capacité d’une arête c’est-à-dire le nombre maximum de véhicules par unité de temps
+pouvant circuler sur cette arête. Cette capacité peut servir à modéliser l’importance d’une
+route : grosse artère, route moyenne, rue, ...
+- ...
+Les paramètres caractéristiques du graphe routier à étudier :
+- n le nombre de sommets (nombre de carrefours du réseau routier),
+- m nombre d’arêtes (nombre de routes),
+- densité du graphe = ratio m sur n(n-1)/2,
+- degré moyen (nombre moyen de routes incidentes à un carrefour),
+- diamètre du graphe (la longueur du plus long plus court chemin),
+- proportion de grosses artères, de routes moyennes, ...
+- ...
+
+Protocole
+Le protocole de travail serait le suivant :
+1° Constitution d’un échantillon de N graphes planaires
+- Générer aléatoirement N graphes planaires (ou quasi-planaire) ou bien récupérer les cartes
+numérisées de N villes.
+- Relever les paramètres que l’on estime intéressants et qui seront les variables explicatives de
+notre modèle d’IA : nombre de sommets, nombre d’arêtes, densité, degré moyen, diamètre,
+proportion de larges artères, ...
+- Définir un trafic (toujours le même dans un premier temps) : nombre de véhicules/heure,
+proportion de types de véhicules (2 roues, voitures, bus, camions)
+- Faire tourner la simulation SUMO sur chacun des N graphes et relever pour chacun d’eux la
+pollution : C02, NOx, particules fines
+
+2
+
+2° Partitionner l’échantillon de taille N en base d’apprentissage de taille Nappr, disons Nappr=N0.6, et
+en base de test de taille Ntest=N0.4 .
+
+3° Faire apprendre l’IA sur la base d’apprentissage. L’IA doit apprendre la pollution (variables à prédire)
+en fonction des paramètres caractéristiques du graphe (variables explicatives)
+
+4° Enfin, tester l’IA sur la base de test
+
+Choix de l’IA
+Lors de la réunion du 29 Janvier, le choix s’était porté sur l’utilisation de réseaux de neurones. Il restera
+à décider de la structure du réseau et du logiciel utilisé.

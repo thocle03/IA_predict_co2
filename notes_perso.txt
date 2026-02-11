@@ -1,0 +1,20 @@
+Le Contrôle MPC = a ce que je vois juste changer les feux triclore pour mieux les adapter donc dans mon cas pour l'IA pas besoin
+ca peut seulement m'aider a ameliorer le traffic d'une ville en donc mofifiant intelligemment les feux 
+
+L'Analyse Spectrale (Valeurs Propres) -> "L'IRM du Réseau" Cela permet de mesurer la connectivité réelle du réseau.
+Concrètement : Si la "connectivité algébrique" (une valeur propre spécifique) est faible, cela veut dire que 
+le réseau a un goulot d'étranglement majeur (un pont unique, un carrefour central). 
+Si ce point casse, tout le réseau est coupé en deux. 
+Cela permet d'identifier avant même de lancer la simulation les zones critiques à surveiller.
+
+La Constante de Kreiss -> "Le Détecteur de Nervosité"
+prédit si le trafic va "exploser" suite à un petit incident. 
+En gros, plus cette constante est élevée, plus votre réseau est "fragile". 
+Une petite perturbation (un accident, un feu rouge qui dure 10s de trop) peut provoquer un effet domino et paralyser toute la ville.
+Pour l'IA : C'est une variable clé. Une ville avec une Constante de Kreiss très élevée devrait avoir une pollution très instable 
+et élevée si le trafic est dense.
+
+
+dans un premier temps deja bosser sur l'iA et la partie graphe je peux pas encore rééllement lancer l'entrainement
+pour l'instant car pas assez de données pas de serveur etc 
+surtout travaux pour rechercher les parametres optimaux faire des rapports bosser sur les graphes 

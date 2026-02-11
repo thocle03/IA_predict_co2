@@ -8,10 +8,12 @@ CITIES = {
     "berlin": "Berlin, Germany",
     "los_angeles": "Los Angeles, California, USA",
     "madrid": "Madrid, Spain",
-    "paris": "Paris, France"
+    "paris": "Paris, France",
+    "hanoi": "Hanoi, Vietnam"
 }
 
-NETWORK_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "network")
+# Updates path to 'data/networks'
+NETWORK_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "networks")
 os.makedirs(NETWORK_DIR, exist_ok=True)
 
 def download_and_convert(city_key, place_name):
@@ -22,17 +24,19 @@ def download_and_convert(city_key, place_name):
     try:
         print(f"  Downloading OSM data for {place_name}...")
         # Use a central point and radius to avoid huge downloads
-        # Coordinates are approximate centers
+        # Coordinates are approximate centers - Updated for consistency
         centers = {
             "berlin": (52.5200, 13.4050),
             "los_angeles": (34.0522, -118.2437),
             "madrid": (40.4168, -3.7038),
-            "paris": (48.8566, 2.3522)
+            "paris": (48.8566, 2.3522),
+            "hanoi": (21.0285, 105.8542)
         }
         
         if city_key in centers:
             point = centers[city_key]
-            G = ox.graph_from_point(point, dist=2500, network_type='drive', simplify=False)
+            # Increased radius for better sampling
+            G = ox.graph_from_point(point, dist=3000, network_type='drive', simplify=False)
         else:
             G = ox.graph_from_place(place_name, network_type='drive', simplify=False)
         
@@ -46,7 +50,6 @@ def download_and_convert(city_key, place_name):
         print(f"  Converting to SUMO network: {net_file}")
         
         # Check for netconvert
-        # Assuming netconvert is in PATH as SUMO is installed
         cmd = [
             "netconvert",
             "--osm-files", osm_file,
@@ -57,7 +60,8 @@ def download_and_convert(city_key, place_name):
             "--junctions.join", "true",
             "--tls.guess", "true",
             "--tls.discard-simple", "true",
-            "--tls.join", "true"
+            "--tls.join", "true",
+            "--no-turnarounds", "true"
         ]
         
         subprocess.run(cmd, check=True)
@@ -70,7 +74,7 @@ def download_and_convert(city_key, place_name):
         print(f"  ERROR processing {city_key}: {e}")
 
 if __name__ == "__main__":
-    print("Starting map download...")
+    print(f"Starting map download to {NETWORK_DIR}...")
     
     # Check if netconvert is available
     try:

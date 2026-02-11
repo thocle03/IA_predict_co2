@@ -1,0 +1,64 @@
+**BFS seul**, ça veut simplement dire :
+
+👉 **Breadth-First Search**
+👉 en français : **parcours en largeur**
+
+---
+
+### 🧠 Définition simple
+
+BFS est un algorithme qui explore un graphe **couche par couche** :
+
+1. on part d’un nœud de départ
+2. on visite **tous ses voisins directs**
+3. puis les voisins des voisins
+4. et ainsi de suite
+
+Contrairement à DFS, on ne va pas “au fond” d’un chemin, on **s’élargit**.
+
+---
+
+### 📊 Exemple très concret (réseau routier / SUMO)
+
+Imagine une intersection A :
+
+* niveau 0 : A
+* niveau 1 : toutes les routes directement connectées à A
+* niveau 2 : les routes connectées au niveau 1
+* etc.
+
+👉 BFS permet donc de répondre à des questions comme :
+
+* quelles routes sont atteignables depuis ici ?
+* quelles intersections sont à **k sauts** ?
+* quelle zone du réseau est impactée autour d’un point ?
+
+---
+
+### ⚙️ Comment ça marche techniquement
+
+BFS utilise une **file (queue)** :
+
+* on met le point de départ dans la file
+* on dépile, on visite ses voisins
+* on ajoute les voisins non visités à la file
+* on recommence
+
+---
+
+### 🚦 Pourquoi c’est utile en trafic / pollution
+
+Dans SUMO ou les modèles de pollution :
+
+* propagation de pollution ou de congestion
+* calcul de zones d’influence
+* exploration d’un sous-réseau autour d’un capteur
+* calcul de distances topologiques (nombre de routes / intersections)
+
+---
+
+### 🧩 Résumé en une ligne
+
+> **BFS = algorithme qui explore un graphe progressivement, niveau par niveau, à partir d’un point donné.**
+
+Si tu veux, je peux te montrer un **mini pseudo-code** ou un **exemple appliqué à SUMO**.

@@ -41,6 +41,7 @@ st.markdown("""
 if 'analysis_results' not in st.session_state: st.session_state.analysis_results = None
 if 'current_city' not in st.session_state: st.session_state.current_city = None
 if 'show_home' not in st.session_state: st.session_state.show_home = True
+if 'city_results' not in st.session_state: st.session_state.city_results = []
 
 # --- HEADER ---
 st.title("Urban Topology Research Lab")
@@ -51,8 +52,23 @@ st.markdown("---")
 with st.sidebar:
     st.header("Configuration")
     city_input = st.text_input("Ville à analyser", value="Monaco")
+    
+    # NEW: Verification Step
+    if st.button("Vérifier la ville", use_container_width=True):
+        with st.spinner("Recherche..."):
+            st.session_state.city_results = analyzer.search_potential_cities(city_input)
+    
+    final_city_query = None
+    if st.session_state.city_results:
+        city_options = [f"{c['display_name']} (CP: {c['postcode']})" for c in st.session_state.city_results]
+        selected_option = st.selectbox("Sélectionnez l'emplacement exact", city_options)
+        # Map back to full display name
+        idx = city_options.index(selected_option)
+        final_city_query = st.session_state.city_results[idx]['display_name']
+        st.success(f"Ville prête : {st.session_state.city_results[idx]['city']}")
+    
     view_mode = st.radio("Mode de Visualisation", ["2D (Analytique)", "3D (Perspective)"])
-    run_btn = st.button("Lancer l'Analyse Spectrale", use_container_width=True)
+    run_btn = st.button("Lancer l'Analyse Spectrale", use_container_width=True, disabled=(final_city_query is None))
     
     if st.button("Retour à l'accueil", use_container_width=True):
         st.session_state.analysis_results = None; st.session_state.show_home = True; st.rerun()
@@ -111,8 +127,7 @@ def plot_singular_vectors(u1, v1):
     return fig
 
 def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_spectral=False):
-    """3D Map with bulletproof coordinate handling and internal logging"""
-    debug_log = []
+    """3D Map with bulletproof coordinate handling"""
     try:
         import osmnx as ox
         
@@ -128,7 +143,6 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
         
         if center and len(center) >= 2:
             lat, lon = to_float(center[0]), to_float(center[1])
-            debug_log.append(f"DEBUG: Input Center raw={center}, parsed=[{lat}, {lon}]")
             if lat is not None and lon is not None:
                 final_lat, final_lon = lat, lon
                 center_valid = True
@@ -141,11 +155,9 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
             # Fallback center if needed
             if not center_valid and not gdf_nodes.empty:
                 avg_lat, avg_lon = to_float(gdf_nodes.y.mean()), to_float(gdf_nodes.x.mean())
-                debug_log.append(f"DEBUG: Fallback Center from Nodes=[{avg_lat}, {avg_lon}]")
                 if avg_lat is not None and avg_lon is not None:
                     final_lat, final_lon = avg_lat, avg_lon
-        except Exception as e:
-            debug_log.append(f"DEBUG: Error loading background graph: {e}")
+        except:
             gdf_edges = pd.DataFrame()
 
         # 3. Build Layers
@@ -155,16 +167,12 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
         
         if show_spectral and highlight_edge and 'coords' in highlight_edge:
             raw_path = highlight_edge['coords']
-            debug_log.append(f"DEBUG: Critical Edge Coords Count={len(raw_path)}")
-            
             valid_path = []
             for i, c in enumerate(raw_path):
                 if len(c) >= 2:
                     lat, lon = to_float(c[0]), to_float(c[1])
                     if lat is not None and lon is not None:
                         valid_path.append([lon, lat])
-                    else:
-                        debug_log.append(f"DEBUG: Invalid coord at index {i}: {c}")
             
             if len(valid_path) >= 2:
                 layers.append(pdk.Layer(
@@ -176,7 +184,6 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
                 lats = [p[1] for p in valid_path]
                 lons = [p[0] for p in valid_path]
                 cp_lat, cp_lon = float(np.mean(lats)), float(np.mean(lons))
-                debug_log.append(f"DEBUG: Scatterplot Position=[{cp_lat}, {cp_lon}]")
                 
                 layers.append(pdk.Layer(
                     "ScatterplotLayer",
@@ -186,7 +193,6 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
 
         # 4. Final View State Check
         if not np.isfinite(final_lat) or not np.isfinite(final_lon):
-             debug_log.append(f"CRITICAL: final_lat/lon is still NaN/Inf! lat={final_lat}, lon={final_lon}")
              final_lat, final_lon = 0.0, 0.0
 
         st.pydeck_chart(pdk.Deck(
@@ -195,21 +201,17 @@ def display_map_3d(city_name, highlight_edge=None, center=None, zoom=14, show_sp
             map_style="mapbox://styles/mapbox/dark-v9", 
             tooltip={"text": "{name}"}
         ))
-        
-        with st.expander("🛠️ Debug Log Cardographique (3D)"):
-            for log in debug_log: st.text(log)
             
     except Exception as e: 
         st.error(f"Erreur 3D Critique: {e}")
-        st.code(debug_log)
 
 # --- MAIN LOGIC ---
 
-if run_btn:
+if run_btn and final_city_query:
     st.session_state.show_home = False
-    st.session_state.current_city = city_input
+    st.session_state.current_city = final_city_query
     with st.status("Calculs spectraux en cours...") as status:
-        net_file, safe_name = analyzer.download_city_map(city_input)
+        net_file, safe_name = analyzer.download_city_map(final_city_query)
         metrics = analyzer.analyze_topology(net_file)
         if metrics:
             report_path = analyzer.generate_report(city_input, safe_name, metrics)
@@ -258,7 +260,7 @@ if st.session_state.analysis_results and not st.session_state.show_home:
     st.markdown("---")
 
     # Row 3: All Visualizations (Spectrum, Scree, Vectors)
-    st.markdown("#### 🔬 Laboratoire Spectral")
+    st.markdown("#### Laboratoire Spectral")
     lab_container = st.container()
     with lab_container:
         v1, v2, v3 = st.columns([1, 1, 2])
@@ -292,16 +294,13 @@ if st.session_state.analysis_results and not st.session_state.show_home:
         # Robust focus center calc for the critical street ONLY
         if cs and 'coords' in cs:
             coords = cs['coords']
-            st.sidebar.text(f"TRACING: CS found, coords={len(coords)}")
             if coords:
                 # Filter out garbage coords (NaN, Inf, or empty)
                 valid_coords = [c for c in coords if len(c) >= 2 and np.isfinite(c[0]) and np.isfinite(c[1])]
-                st.sidebar.text(f"TRACING: Valid coords={len(valid_coords)}")
                 if valid_coords:
                     lats = [float(c[0]) for c in valid_coords]
                     lons = [float(c[1]) for c in valid_coords]
                     focus_center = [sum(lats)/len(lats), sum(lons)/len(lons)]
-                    st.sidebar.text(f"TRACING: focus_center={focus_center}")
                     focus_zoom = 19 if cs.get('length', 0) < 15 else 17
             
         if view_mode == "2D (Analytique)":
@@ -314,22 +313,22 @@ if st.session_state.analysis_results and not st.session_state.show_home:
             display_map_3d(city, highlight_edge=cs, center=focus_center, zoom=focus_zoom, show_spectral=True)
 
     with col_critical_info:
-        st.markdown("#### ℹ️ Données du Secteur")
+        st.markdown("#### Données du Secteur")
         if cs:
             st.warning(f"**Goulot Spectral : {cs['name']}**")
             st.markdown(f"- Importance: {cs['importance']:.6f}\n- ID SUMO: `{cs['id']}`")
         
         st.divider()
-        st.markdown("#### 📓 Statut de Stabilité")
+        st.markdown("#### Statut de Stabilité")
         st.info(f"""
         - Instabilité : { "🔴 Critique" if m['kreiss_constant'] > 10 else "🟢 Modérée" }
         - Robustesse : { "🔴 Faible" if abs(m['h_inf_norm'] - m['spectral_radius']) < 0.1 else "🟢 Élevée" }
         """)
 
     st.markdown("---")
-    with st.expander("📜 Consulter le Rapport Scientifique Complet"):
+    with st.expander("Consulter le Rapport Scientifique Complet"):
         st.markdown(res['report'])
 
 elif st.session_state.show_home:
     st.markdown("## Plateforme d'Analyse de la Topologie Urbaine et de la Stabilité des Réseaux")
-    st.markdown("Cette interface est dédiée à l'étude structurelle des réseaux routiers urbains dans le cadre de recherches doctorales.")
+    st.markdown("Cette interface est dédiée à l'étude structurelle des réseaux routiers urbains.")

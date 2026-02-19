@@ -13,12 +13,51 @@ import networkx as nx
 import pandas as pd
 import folium
 
+import requests
+
 # --- CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NET_DIR = os.path.join(BASE_DIR, "data", "networks")
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(NET_DIR, exist_ok=True)
 os.makedirs(REPORT_DIR, exist_ok=True)
+
+def search_potential_cities(query):
+    """Queries Nominatim to find potential matches for a city name"""
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": query,
+        "format": "json",
+        "addressdetails": 1,
+        "limit": 5,
+        "featuretype": "settlement" # Focus on cities/towns
+    }
+    headers = {"User-Agent": "UrbanTopologyResearchLab/1.0"}
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        if response.status_code == 200:
+            results = response.json()
+            candidates = []
+            for r in results:
+                addr = r.get('address', {})
+                postcode = addr.get('postcode', 'N/A')
+                city = addr.get('city') or addr.get('town') or addr.get('village') or addr.get('municipality')
+                country = addr.get('country', '')
+                display_name = r.get('display_name')
+                
+                candidates.append({
+                    "display_name": display_name,
+                    "city": city,
+                    "postcode": postcode,
+                    "country": country,
+                    "lat": r.get('lat'),
+                    "lon": r.get('lon'),
+                    "osm_id": r.get('osm_id')
+                })
+            return candidates
+    except Exception as e:
+        print(f"Search error: {e}")
+    return []
 
 def download_city_map(city_query):
     """Downloads map from OSM and converts to SUMO .net.xml"""

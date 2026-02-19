@@ -17,8 +17,8 @@ Le fait que $\sigma_{max} \approx \rho$ signifie que l'amplification maximale in
 C'est le signal le plus critique. Avec $K \gg \sigma_{max}$, la **non-normalité** est massive. Le système peut amplifier une perturbation locale de manière disproportionnée (effet papillon), provoquant des explosions transitoires de congestion.
 
 ## Identification du Secteur Critique (Pivot de Perron-Frobenius)
-- **Rue Critique** : **-265485900#0** (ID: `-265485900#0`)
-- **Poids Spectral** : 0.507958
+- **Rue Critique** : **-265485900#1** (ID: `-265485900#1`)
+- **Poids Spectral** : 0.565724
 - **Action Recommandée** : Casser la non-normalité sur cet axe (pénalisation des hubs dominants, splitting d'arcs).
 
 

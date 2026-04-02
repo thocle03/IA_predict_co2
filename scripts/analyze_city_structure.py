@@ -149,7 +149,7 @@ def get_edge_by_id(net_file, edge_id):
 
 def analyze_topology(net_file):
     """Computes advanced graph metrics including singular mode identification"""
-    print(f"\n--- 2. ANALYSE SPECTRALE APPLIQUÉE ---")
+    print(f"\n log : analyse topologique")
     
     try:
         net = sumolib.net.readNet(net_file)

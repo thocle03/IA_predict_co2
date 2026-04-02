@@ -18,3 +18,47 @@ et élevée si le trafic est dense.
 dans un premier temps deja bosser sur l'iA et la partie graphe je peux pas encore rééllement lancer l'entrainement
 pour l'instant car pas assez de données pas de serveur etc 
 surtout travaux pour rechercher les parametres optimaux faire des rapports bosser sur les graphes 
+
+ensuite docteur m'a dit comment sauvegarder les graphes pour s'en servir dans notre IA
+
+rajouter update de tous ca dans le gdoc partagé 
+
+dérivée secondes des valeurs propres (ethan fait)
+pertube la matrice dans quelle direction tu peux aller
+a voir idée ethan (voir si ca marche)
+theorie des pertubations 
+KATO
+il se passe quoi si je perturbe un graphe 
+et dérivée premiere et seconde des valeurs propres
+
+faire une loi de controle pour optimiser (minimiser ou maximiser) pour ameliorer la robustesse de mon graphe
+
+
+toutes les villes en memoire
+separer par Contrairementalpha pourcent de tel ville puis beta pourcent de tel ville
+re pondere derriere
+donner du poids a ville trouvé
+diminuer le poid des autres villes
+additioner 20%  de machin puis 20% de machin comme egal à 100%
+defini un nouvel referenciel combinaison lineaire de l'ensemble de mes variables
+ville = variable et creer nouveau combinaison lineaire de mes variables 
+
+voir ce qu'on donne a mangé exactement a XGBoost dans mon cas
+
+donner poids important a marseilles dans notre cas de neerobi
+donner csv a mon IA avec toutes les données dedans 
+y= pourcentage de aloha du CO2 
+
+mode de fonctionnement du gboost
+
+poids aussi par continent si pourcentage proches 
+
+bien savoir expliquer le GBoost comment ca marche ce qu'on lui donne et ce qu'on lui demande
+voir differents poids
+
+voir si dicision = csv 
+
+revenir sur l'autre et comparer le Co2 pour les differents mode sur une meme ville (fast data etc)
+refaire les villes necessaires
+
+
